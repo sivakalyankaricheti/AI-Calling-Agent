@@ -1,9 +1,9 @@
 import {
   loadRnnoise,
   RnnoiseWorkletNode,
-} from '/twilio-voice-noise-cancellation/web-noise-suppressor/index.js';
+} from '/twilio-voice-rnnoise-noise-cancellation/web-noise-suppressor/index.js';
 
-const BASE = '/twilio-voice-noise-cancellation/web-noise-suppressor';
+const BASE = '/twilio-voice-rnnoise-noise-cancellation/web-noise-suppressor';
 
 // The RNNoise WASM binary is fetched once and shared by every processor.
 let wasmBinaryPromise;
@@ -90,11 +90,11 @@ class TwilioVoiceNoiseCancellation extends HTMLElement {
     });
 
     this.shadowRoot
-      .querySelector('#denoise-local')
-      .addEventListener('change', (e) => this.#toggleLocal(e.target.checked));
+      .querySelector('#denoise-local-checkbox')
+      .addEventListener('change', (e) => this.#onLocalChange(e.target.checked));
     this.shadowRoot
-      .querySelector('#denoise-remote')
-      .addEventListener('change', (e) => this.#toggleRemote(e.target.checked));
+      .querySelector('#denoise-remote-checkbox')
+      .addEventListener('change', (e) => this.#onRemoteChange(e.target.checked));
   }
 
   // One AudioContext is shared by both processors. Constructed lazily on the
@@ -104,7 +104,7 @@ class TwilioVoiceNoiseCancellation extends HTMLElement {
     return this.#audioContext;
   }
 
-  async #toggleLocal(on) {
+  async #onLocalChange(on) {
     if (!this.#device) {
       console.warn('Device not ready yet.');
       return;
@@ -121,7 +121,7 @@ class TwilioVoiceNoiseCancellation extends HTMLElement {
     }
   }
 
-  async #toggleRemote(on) {
+  async #onRemoteChange(on) {
     if (!this.#device) {
       console.warn('Device not ready yet.');
       return;
@@ -142,10 +142,10 @@ class TwilioVoiceNoiseCancellation extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <div id="noise-cancellation">
         <label>
-          <input type="checkbox" id="denoise-local" /> Denoise microphone
+          <input type="checkbox" id="denoise-local-checkbox" /> Denoise microphone
         </label>
         <label>
-          <input type="checkbox" id="denoise-remote" /> Denoise incoming audio
+          <input type="checkbox" id="denoise-remote-checkbox" /> Denoise incoming audio
         </label>
       </div>
     `;
@@ -153,6 +153,6 @@ class TwilioVoiceNoiseCancellation extends HTMLElement {
 }
 
 customElements.define(
-  'twilio-voice-noise-cancellation',
+  'twilio-voice-rnnoise-noise-cancellation',
   TwilioVoiceNoiseCancellation
 );
