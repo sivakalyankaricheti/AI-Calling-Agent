@@ -3,6 +3,7 @@ import config from './config.js';
 import express from 'express';
 import http from 'http';
 import path from 'path';
+import { pathToFileURL } from 'url';
 import { existsSync, readdirSync } from 'fs'
 
 const app = express();
@@ -15,11 +16,11 @@ readdirSync(componentsDir, { withFileTypes: true })
   .filter(item => item.isDirectory())
   .forEach(async ({ name }) => {
     app.use(`/${name}`, express.static(path.join(componentsDir, name, 'public')));
-    app.use(`/${name}`, (await import(path.join(componentsDir, name, 'routes.js'))).default);
+    app.use(`/${name}`, (await import(pathToFileURL(path.join(componentsDir, name, 'routes.js')).href)).default);
 
     const indexPath = path.join(componentsDir, name, 'index.js');
     if (existsSync(indexPath)) {
-      const indexModule = await import(indexPath);
+      const indexModule = await import(pathToFileURL(indexPath).href);
       indexModule.default(server);
     }
   });
