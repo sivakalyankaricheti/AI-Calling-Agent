@@ -11,6 +11,10 @@ const server = http.createServer(app);
 const componentsDir = path.join(process.cwd(), 'src/components');
 const { port } = config;
 
+app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }));
+
+app.use('/', express.static(path.join(process.cwd(), 'public')));
+
 // Serve the public folder of each component
 readdirSync(componentsDir, { withFileTypes: true })
   .filter(item => item.isDirectory())
